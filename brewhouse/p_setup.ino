@@ -5,9 +5,6 @@ void setup(){
 
   Serial.println(F("Program start"));
 
-  pinMode(21, INPUT_PULLUP);//I2C pull-ups
-  pinMode(20, INPUT_PULLUP);
-
   
   //setup onewire temperature sensors
   oneWireSensors.begin();
