@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QApplication
 import sys
 import logger
 from forms.form_main import MainWindow
@@ -8,7 +8,7 @@ from parameters import Parameters
 import os
 import threading
 import subprocess
-from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QStackedWidget,QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QStackedWidget,QMessageBox
 from dataContainer import DataContainer
 
 class cApp:

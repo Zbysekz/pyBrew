@@ -3,3 +3,4 @@ pygame>=1.9.6
 pySerial>=3.5
 pygame-textinput
 mysql-connector-python==8.0.29
+Pyqt5

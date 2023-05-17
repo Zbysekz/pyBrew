@@ -1,0 +1,2 @@
+Pyqt6==6.2.1
+pyserial

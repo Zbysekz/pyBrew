@@ -1,5 +1,9 @@
 import platform
 import configparser
+import os
+import pathlib
+
+rootPath = str(pathlib.Path(__file__).parent.absolute())
 
 class Parameters:
     config = configparser.ConfigParser()
@@ -7,48 +11,42 @@ class Parameters:
 
     ON_RASPBERRY = platform.machine() != "x86_64"
 
-    print(list(config.items()))
     NORMAL = 0
     RICH = 1
     FULL = 2
-    verbosity = int(config['debug']['verbosity'])
 
-    serialPort = config['general']['serialPort']
-    server_ip_address = config['general']['server_ip_address']
+    def __init__(self):
+        config = configparser.ConfigParser()
+        configPath = os.path.join(rootPath, '../config.ini')
+        cnt = len(config.read(configPath))
 
-    hlt_setpoint = float(config['processValues']['hlt_setpoint'])
-    rvk_setpoint = float(config['processValues']['rvk_setpoint'])
+        if cnt == 0:
+            raise RuntimeError("Cannot open config.ini file in working directory!")
 
+        for p in config.items():
+            for p2 in config[p[0]].items():
 
-    aut_setpoint0 = float(config['processValues']['aut_setpoint0'])
-    aut_setpoint1 = float(config['processValues']['aut_setpoint1'])
-    aut_setpoint2 = float(config['processValues']['aut_setpoint2'])
-    aut_setpoint3 = float(config['processValues']['aut_setpoint3'])
-    aut_setpoint4 = float(config['processValues']['aut_setpoint4'])
+                setattr(self, p2[0].upper(), p2[1])
 
-    aut_grad0 = float(config['processValues']['aut_grad0'])
-    aut_grad1 = float(config['processValues']['aut_grad1'])
-    aut_grad2 = float(config['processValues']['aut_grad2'])
-    aut_grad3 = float(config['processValues']['aut_grad3'])
-    aut_grad4 = float(config['processValues']['aut_grad4'])
+        #special conversion for verbosity
+        if type(self.VERBOSITY) == str:
+            self.VERBOSITY = int(config['debug']['verbosity'])
 
-    aut_time0 = float(config['processValues']['aut_time0'])
-    aut_time1 = float(config['processValues']['aut_time1'])
-    aut_time2 = float(config['processValues']['aut_time2'])
-    aut_time3 = float(config['processValues']['aut_time3'])
-    aut_time4 = float(config['processValues']['aut_time4'])
+        if hasattr(self, "DEBUG_FLAG"):
+            self.DEBUG_FLAG = eval(self.DEBUG_FLAG)
+        if hasattr(self, "INSTANCE_CHECK"):
+            self.INSTANCE_CHECK = eval(self.INSTANCE_CHECK)
 
-    persistentList = []
+    def save(self):
+        config = configparser.ConfigParser()
+        configPath = os.path.join(rootPath, '../config.ini')
+        cnt = len(config.read(configPath))
+        if cnt == 0:
+            raise RuntimeError("Cannot open config.ini file in working directory!")
 
-    @classmethod
-    def Write(cls, dataContainer):
-        for obj, key, prop in cls.persistentList:
-            cls.config['processValues'][key] = str(dataContainer[key])
+        for p in config.items():
+            for p2 in config[p[0]].items():
+                config.set(p[0], p2[0], str(getattr(self, p2[0].upper(), p2[1])))
+        with open(os.path.join(rootPath, '../config.ini'), 'w') as configfile:
+            config.write(configfile)
 
-        with open('../config.ini', 'w') as configfile:
-            cls.config.write(configfile)
-    @classmethod
-    def makePersistent(cls, object, key, prop): # and also load value from config
-        cls.persistentList += [[object, str(key), str(prop)]]
-
-        setattr(object[key], prop, float(cls.config['processValues'][key]))
