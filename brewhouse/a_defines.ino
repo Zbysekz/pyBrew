@@ -37,16 +37,21 @@ uint8_t rxLen,crcH,crcL,readState,rxPtr,rxBufPtr=0;
 
 unsigned long errorFlags;
 
-#define PIN_ONE_WIRE_BUS 30
-#define PIN_HEAT_RVK_1 39
-#define PIN_HEAT_RVK_2 47
-#define PIN_HEAT_RVK_3 49
+#define PIN_ONE_WIRE_BUS 31
+#define PIN_HEAT_RVK_1 45
+#define PIN_HEAT_RVK_2 43
+#define PIN_HEAT_RVK_3 41
 
-#define PIN_HEAT_HLT_1 45
-#define PIN_HEAT_HLT_2 43
-#define PIN_HEAT_HLT_3 41
+#define PIN_HEAT_HLT_1 39
+#define PIN_HEAT_HLT_2 37
+#define PIN_HEAT_HLT_3 35
 
-#define PIN_LEDNICE 51
+#define PIN_LEDNICE 53
+#define PIN_PUMP 51
+#define PIN_RESERVE1 49
+#define PIN_RESERVE2 47
+
+
 
 
 // Setup a oneWire instance to communicate with any OneWire devices
