@@ -11,13 +11,17 @@ class Communicate(QObject):
 
     closeApp = pyqtSignal()
     showNotFoundError = pyqtSignal()
+    recipeChanged = pyqtSignal()
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, parameters, dataContainer):
+    def __init__(self, parameters, dataContainer, arduinoComm, stateMachine):
         super(MainWindow, self).__init__()  # Call the inherited classes __init__ method
         uic.loadUi('./forms/form_main.ui', self)  # Load the .ui file
         self.parameters = parameters
+        self.arduinoComm = arduinoComm
+        self.stateMachine = stateMachine
+
         self.setWindowTitle("PyBrew app")
         self.dataContainer = dataContainer
         self.c = Communicate()
@@ -26,14 +30,16 @@ class MainWindow(QMainWindow):
         self.btnRemove.clicked.connect(self.removeMashLine)
         self.actionLoad.triggered.connect(self.load_recipe_from_file)
         self.actionSave.triggered.connect(self.save_recipe_to_file)
+        self.chk_HLT_pid.stateChanged.connect(self.hlt_pid_changed)
+        self.chk_RVK_pid.stateChanged.connect(self.rvk_pid_changed)
+        self.chk_RVK_on.stateChanged.connect(self.rvk_on_changed)
+        self.chk_HLT_on.stateChanged.connect(self.hlt_on_changed)
+        self.e_rvk_sp.valueChanged.connect(self.rvk_sp_changed)
+        self.e_hlt_sp.valueChanged.connect(self.hlt_sp_changed)
+        self.btnSkip.clicked.connect(self.stateMachine.skipStep)
+        self.chk_stateMachine_on.stateChanged.connect(self.chk_state_machine_on_changed)
 
-        self.menuTest.addAction("Nazdar")
-        self.menuTest.addAction("Bazar")
-        self.menuTest.addAction("Hurá")
-
-        for i in ["COM1", "Bazar", "Hurá"]:
-            self.menuTest.addAction(i)
-
+        self.c.recipeChanged.connect(self.retrieve_recipe)
 
         self.btnFan.mousePressEvent = self.toggleFan  # because this btn is actually label
         self.timer = QTimer()
@@ -56,14 +62,29 @@ class MainWindow(QMainWindow):
             self.load_recipe_from_file(withoutDialog=True)
             self.build_recipe(self.recipe)
 
-        self.fan_state = False
-        
+# TODO improve these both dir events
+    def hlt_sp_changed(self):
+        self.dataContainer.hlt_setpoint = self.e_hlt_sp.value()
+    def rvk_sp_changed(self):
+        self.dataContainer.rvk_setpoint = self.e_rvk_sp.value()
+    def chk_state_machine_on_changed(self):
+        if self.chk_stateMachine_on.isChecked():
+            self.stateMachine.start()
+    def hlt_pid_changed(self):
+        self.dataContainer.hlt_PID = self.chk_HLT_pid.isChecked()
+
+    def rvk_pid_changed(self):
+        self.dataContainer.rvk_PID = self.chk_RVK_pid.isChecked()
+
+    def hlt_on_changed(self):
+        self.dataContainer.hlt_on = self.chk_HLT_on.isChecked()
+
+    def rvk_on_changed(self):
+        self.dataContainer.rvk_on = self.chk_RVK_on.isChecked()
+
     def toggleFan(self, *arg, **kwargs):
         self.dataContainer.fan_state = not self.dataContainer.fan_state
-        if self.dataContainer.fan_state:
-            self.btnFan.setStyleSheet("background-color: rgb(85, 255, 0);")
-        else:
-            self.btnFan.setStyleSheet("")
+        self.update()
 
     def addMashLine(self):
         if len(self.recipe.keys()) > 0:
@@ -86,7 +107,7 @@ class MainWindow(QMainWindow):
             layout.removeWidget(l)
         self.mashLines.clear()
         for line in recipe.values():
-            wd = MashLine(*line)
+            wd = MashLine(*line, self.c.recipeChanged)
         # wd.setFixedHeight(60)
             self.mashLines.append(wd)
             layout.addWidget(wd)
@@ -110,6 +131,7 @@ class MainWindow(QMainWindow):
                     data = f.read()
                     self.recipe = json.loads(data)
                     self.build_recipe(self.recipe)
+                    self.retrieve_recipe()
 
                     self.statusbar.findChild(QLabel).setText(f"Načten recept {filename}")
                     self.statusbar.showMessage("Načteno!", 2000)
@@ -125,9 +147,11 @@ class MainWindow(QMainWindow):
             temp, time, gradient = l.readValues()
             self.recipe[str(ptr)] = [temp, time, gradient]
             ptr += 1
+        self.dataContainer.recipe = self.recipe
+
+        print("recipe retrieved")
 
     def save_recipe_to_file(self):
-
         self.retrieve_recipe()
 
         fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "",
@@ -140,10 +164,10 @@ class MainWindow(QMainWindow):
 
             except Exception as e:
                 self.showError(f"Nezdařilo se uložit recept! {repr(e)}")
-
-    def show_status(self):
-        self.show_status_dialog = True
-
+                return False
+            self.parameters.LAST_OPEN_PATH = fileName
+            return True
+        return False
     def showError(self, str):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Icon.Warning)
@@ -155,18 +179,82 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):  # overriden method from ui
         self.close()
 
-    def show_settings(self):
-        self.form_settings.show()
-
-    def show_about(self):
-        self.form_about.show()
 
     def keyPressEvent(self, event):
         #if event.key() == Qt.Key.Key_Escape:
         pass
 
     def update(self):
-        if self.show_status_dialog:
-            self.form_status = FormStatus(self.db, self.parameters, self.logged_user_name)
-            self.form_status.show()
-            self.show_status_dialog = False
+        if self.dataContainer.fan_state:
+            self.btnFan.setStyleSheet("background-color: rgb(85, 255, 0);")
+        else:
+            self.btnFan.setStyleSheet("")
+        if self.arduinoComm.connected:
+            self.lblConnected.setStyleSheet("background-color: rgb(85, 255, 0);")
+        else:
+            self.lblConnected.setStyleSheet("background-color: rgb(255, 0, 0);")
+
+        if self.dataContainer.sp_reached:
+            self.lbl_SP_reached.setStyleSheet("color: rgb(255, 255, 255); background-color: green;")
+        else:
+            self.lbl_SP_reached.setStyleSheet("")
+
+        self.dataContainer.state_machine_on = self.chk_stateMachine_on.isChecked()
+        self.chk_HLT_pid.setChecked(self.dataContainer.hlt_PID)
+        self.chk_RVK_pid.setChecked(self.dataContainer.rvk_PID)
+        self.chk_HLT_on.setChecked(self.dataContainer.hlt_on)
+        self.chk_RVK_on.setChecked(self.dataContainer.rvk_on)
+
+        if self.chk_RVK_pid.isChecked():
+            self.e_rvk_sp.setSuffix("°C")
+        else:
+            self.e_rvk_sp.setSuffix("%")
+
+        if self.chk_HLT_pid.isChecked():
+            self.e_hlt_sp.setSuffix("°C")
+        else:
+            self.e_hlt_sp.setSuffix("%")
+
+        self.lbl_hlt_value.setText("{:.1f} °C".format(self.dataContainer.hlt_value))
+        self.lbl_rvk_value.setText("{:.1f} °C".format(self.dataContainer.rvk_value))
+        self.lbl_scz_value.setText("{:.1f} °C".format(self.dataContainer.scz_value))
+
+        str_error = ""
+        str_error += "HLT_SENSOR" if self.dataContainer.errorFlags & 0x01 else ""
+        str_error += "SCZ_SENSOR" if self.dataContainer.errorFlags & 0x02 else ""
+        str_error += "RVK_SENSOR" if self.dataContainer.errorFlags & 0x04 else ""
+
+        self.lbl_errors.setText(f"Errors: {self.dataContainer.errorFlags} - {str_error}")
+
+        self.e_hlt_sp.setValue(self.dataContainer.hlt_setpoint)
+        self.e_rvk_sp.setValue(self.dataContainer.rvk_setpoint)
+
+        # heating elements
+        self.colorify_heating_element(self.dataContainer.outputs & 0x01, self.rvk_heat_1)
+        self.colorify_heating_element(self.dataContainer.outputs & 0x02, self.rvk_heat_2)
+        self.colorify_heating_element(self.dataContainer.outputs & 0x04, self.rvk_heat_3)
+
+        self.colorify_heating_element(self.dataContainer.outputs & 0x08, self.hlt_heat_1)
+        self.colorify_heating_element(self.dataContainer.outputs & 0x10, self.hlt_heat_2)
+        self.colorify_heating_element(self.dataContainer.outputs & 0x20, self.hlt_heat_3)
+
+        self.lbl_rem_time.setText(f"Zbývající čas: {(int)(self.stateMachine.step_remaining_time/60)} min {(int)(self.stateMachine.step_remaining_time%60)} s")
+        self.lbl_step_actual_time.setText(
+            f"Aktuální čas v kroku:{(int)(self.stateMachine.step_actual_time / 60)} min {(int)(self.stateMachine.step_actual_time % 60)} s")
+
+        self.lbl_reached_actual_time.setText(
+            f"Akt.čas po dosažení:{(int)(self.stateMachine.step_reached_actual_time / 60)} min {(int)(self.stateMachine.step_reached_actual_time % 60)} s")
+
+        self.lbl_avg_grad.setText(f"Gradient: {'{:.1f} °C'.format(self.dataContainer.avg_grad)}°C/min")
+
+        for l in self.mashLines:
+            l.setColor("rgb(0, 150, 255)")
+        if len(self.mashLines) > self.stateMachine.state - 1:
+            self.mashLines[self.stateMachine.state - 1].setColor("green")
+
+    def colorify_heating_element(self, state, object):
+        if state:
+            object.setStyleSheet("background-color: rgb(85, 255, 0);")
+        else:
+            object.setStyleSheet("background-color: rgb(0, 85, 127);")
+

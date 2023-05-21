@@ -4,9 +4,10 @@ from PyQt5.QtWidgets import QWidget, \
     QGraphicsPixmapItem, QGraphicsScene
 from PyQt5.QtGui import QPixmap
 import datetime
+from PyQt5.QtCore import pyqtSignal
 
 class MashLine(QWidget):
-    def __init__(self, temperature, time, gradient):
+    def __init__(self, temperature, time, gradient, callback_change :pyqtSignal):
         super(MashLine, self).__init__()  # Call the inherited classes __init__ method
         uic.loadUi('./widgets/mashLine.ui', self)  # Load the .ui file
         # self.show() # Show the GUI
@@ -15,7 +16,16 @@ class MashLine(QWidget):
         self.edit_time.setValue(time)
         self.edit_gradient.setValue(gradient)
 
+        self.edit_temp.valueChanged.connect(self.change)
+        self.edit_time.valueChanged.connect(self.change)
+        self.edit_gradient.valueChanged.connect(self.change)
+
+        self.callback_change = callback_change
+
         self.update("not_reached")
+
+    def change(self):
+        self.callback_change.emit()
 
     def update(self, state):
         #self.setColor("lime")

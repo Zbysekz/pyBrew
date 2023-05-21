@@ -16,7 +16,7 @@ def Log(s, _verbosity=Parameters.NORMAL, filename = "main"):
 
     dateStr = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    path = rootPath+"/logs/"+str(filename)+".log"
+    path = "/var/log/brew/"+str(filename)+".log"
 
     try:
         with open(path, "a") as file:

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from logger import Log
 
 rcvdData = []  # list of lists of rcvd data
 
@@ -118,15 +119,6 @@ def CreatePacket(d, crc16=True):
 
     return data
 
-
-def Log(s, _verbosity=NORMAL):
-    if _verbosity > verbosity:
-        return
-    print(str(s))
-    from datetime import datetime
-    dateStr = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    with open("/var/log/brew/serialData.log", "a") as file:
-        file.write(dateStr + " >> " + str(s) + "\n")
 
 
 # legacy, should be substituted with CRC16

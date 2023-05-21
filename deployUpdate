@@ -1,4 +1,0 @@
-cd /media/D/Data/Pivovar/brew/
-tar -zcvf update.tar.gz --exclude='*/__pycache__*' --exclude='*/logs/*' --exclude='*.git*' --exclude='*.idea*' --exclude='venv/*' brew
-
-sshpass -p brew2448 scp -r /media/D/Data/Pivovar/brew/update.tar.gz pi@192.168.0.9:/home/pi/brew/update/
