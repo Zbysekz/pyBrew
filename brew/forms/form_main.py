@@ -220,9 +220,10 @@ class MainWindow(QMainWindow):
         self.lbl_scz_value.setText("{:.1f} °C".format(self.dataContainer.scz_value))
 
         str_error = ""
-        str_error += "HLT_SENSOR" if self.dataContainer.errorFlags & 0x01 else ""
-        str_error += "SCZ_SENSOR" if self.dataContainer.errorFlags & 0x02 else ""
+        str_error += "UNKNOWN" if self.dataContainer.errorFlags & 0x01 else ""
+        str_error += "HLT_SENSOR" if self.dataContainer.errorFlags & 0x02 else ""
         str_error += "RVK_SENSOR" if self.dataContainer.errorFlags & 0x04 else ""
+        str_error += "SCZ_SENSOR" if self.dataContainer.errorFlags & 0x08 else ""
 
         self.lbl_errors.setText(f"Errors: {self.dataContainer.errorFlags} - {str_error}")
 

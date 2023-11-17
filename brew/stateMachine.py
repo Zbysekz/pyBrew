@@ -44,7 +44,7 @@ class StateMachine:
                 step_temp, step_time, step_grad = self.dataContainer.recipe[str(self.state)]
 
                 self.dataContainer.rvk_on = self.dataContainer.rvk_value < step_temp
-                self.dataContainer.rvk_pid = False
+                self.dataContainer.rvk_PID = False
 
                 if not self.dataContainer.sp_reached:
                     self.dataContainer.rvk_setpoint = step_grad  # for now - without grad regulation

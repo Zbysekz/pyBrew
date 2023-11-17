@@ -86,7 +86,6 @@ class Receiver:
             if (rcv == 222):  # end token
                 rcvdData.append(self.rxBuffer[0:self.rxLen])
                 self.readState = 0
-                Log("New data received!", FULL)
                 if len(rcvdData) > 10:
                     Log("Rcv queue is large! Len:" + str(len(rcvdData)), NORMAL)
                     Log(rcvdData, RICH)

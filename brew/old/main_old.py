@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from screenManager import cScreenManager
 from Logger import Log,LogException
-from databaseMySQL import cMySQL
+from SmartHome.sql.databaseMySQL import cMySQL
 
 import threading
 import configparser
