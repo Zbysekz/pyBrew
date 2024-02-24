@@ -43,7 +43,7 @@ class ArduinoComm:
         try:
             self.serialPort = serial.Serial( self.parameters.SERIALPORT, timeout=0.1)  # open serial port
             self.connected = True
-            Log("Serial port opened.")
+            Log("Serial port for arduino opened.")
         except Exception as e:
             Log("Serial port opening error! " + str(e))
 
@@ -77,7 +77,8 @@ class ArduinoComm:
         bitsPacked = packBits(self.dataContainer.hlt_on,
                               self.dataContainer.hlt_PID,
                               self.dataContainer.rvk_on,
-                              self.dataContainer.rvk_PID)
+                              self.dataContainer.rvk_PID,
+                              self.dataContainer.driverRun)
         # print("PACKED:")
         # print([i for i in bitsPacked])
         # print(int.from_bytes(bitsPacked[0],"little",signed=False))

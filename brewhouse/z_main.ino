@@ -2,6 +2,9 @@
 void loop(){
 
   if(CheckTimer(tmrControlLoop, 100L)){
+
+    digitalWrite(PIN_DRIVER1_RUN, driver1Run);
+
     ReadTemperatures();
 
     ////////--RVK--/////

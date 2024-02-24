@@ -730,6 +730,84 @@ color: rgb(255, 255, 255);</string>
      <string>Přeskočit krok</string>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>310</y>
+      <width>241</width>
+      <height>221</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Míchadlo</string>
+    </property>
+    <widget class="QLabel" name="lblDriverState">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>211</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stav měniče: ?</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnStirOnOff">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>131</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Zapnout</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnDriverReset">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Reset</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>221</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="lbl_errors_3">
+        <property name="text">
+         <string>Otáčky</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="eDriver_sp">
+        <property name="maximum">
+         <number>32767</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

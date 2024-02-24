@@ -23,6 +23,8 @@ class DataContainer:
         self.sp_reached = False
 
         self.recipe = {}
+        self.driver_state = "?"
+        self.driverRun = 0
 
 
     def updateValues(self):

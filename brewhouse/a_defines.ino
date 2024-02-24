@@ -20,7 +20,7 @@ uint8_t errorCnt_dataCorrupt, errorCnt_CRCmismatch, errorCnt_BufferFull;
 uint8_t rxBuffer[RXQUEUESIZE][RXBUFFSIZE];//for first item if >0 command is inside, 0 after it is proccessed
 bool rxBufferMsgReady[RXQUEUESIZE];
 uint8_t rxLen,crcH,crcL,readState,rxPtr,rxBufPtr=0;
-
+uint8_t driver1Run;
 /////// MACROS
 
 #define getH(x) (uint8_t(round(x*100)/256))
@@ -46,7 +46,7 @@ unsigned long errorFlags;
 #define PIN_HEAT_HLT_2 37
 #define PIN_HEAT_HLT_3 35
 
-#define PIN_LEDNICE 53
+#define PIN_DRIVER1_RUN 53
 #define PIN_PUMP 51
 #define PIN_RESERVE1 49
 #define PIN_RESERVE2 47

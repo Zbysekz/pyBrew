@@ -16,9 +16,8 @@ void setup(){
   pinMode(PIN_HEAT_RVK_1, OUTPUT);
   pinMode(PIN_HEAT_RVK_2, OUTPUT);
   pinMode(PIN_HEAT_RVK_3, OUTPUT);
-  
-  pinMode(PIN_LEDNICE, OUTPUT);
-      
+    
+  pinMode(PIN_DRIVER1_RUN, OUTPUT);
 
   // LCD
   //for ESP: D1-SCL; D2-SDA

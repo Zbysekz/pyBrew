@@ -12,6 +12,7 @@ import subprocess
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QStackedWidget,QMessageBox
 from dataContainer import DataContainer
 from arduinoComm import ArduinoComm
+from driverComm import DriverComm
 from stateMachine import StateMachine
 
 rootPath = str(pathlib.Path(__file__).parent.absolute())
@@ -28,13 +29,15 @@ class cApp:
         self.dataContainer = DataContainer()
 
         self.arduinoComm = ArduinoComm(self.parameters, self.threads, self.dataContainer)
+        self.driverComm = DriverComm(self.parameters, self.threads, self.dataContainer)
         self.stateMachine = StateMachine(self.dataContainer)
 
         self.mainWindow = MainWindow(self.parameters, self.dataContainer,
-                                     self.arduinoComm, self.stateMachine)
+                                     self.arduinoComm, self.driverComm, self.stateMachine)
 
     def run(self):
         retCode = -1
+        self.driverComm.process() # then self-called
         try:
             self.mainWindow.update()
             self.mainWindow.show()
@@ -47,6 +50,7 @@ class cApp:
             LogException(e)
 
         self.arduinoComm.terminate=True
+        self.driverComm.terminate=True
         Log("quitting")
         Log("Threads:" + str(self.threads.values()))
         for name, t in self.threads.items():
@@ -76,7 +80,6 @@ class cApp:
     def CheckForSWUpdate(self):
         updateFolder = rootPath+'/../update/'
         files = os.listdir(updateFolder)
-        print("checking folder"+str(updateFolder))
         if len(files)>0:
             for f in files:
                 os.replace(updateFolder+f, rootPath+"/"+os.path.basename(f)) # move to parent folder

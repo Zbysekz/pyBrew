@@ -15,12 +15,14 @@ class Communicate(QObject):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, parameters, dataContainer, arduinoComm, stateMachine):
+    def __init__(self, parameters, dataContainer, arduinoComm, driverComm, stateMachine):
         super(MainWindow, self).__init__()  # Call the inherited classes __init__ method
         uic.loadUi('./forms/form_main.ui', self)  # Load the .ui file
         self.parameters = parameters
         self.arduinoComm = arduinoComm
+        self.driverComm = driverComm
         self.stateMachine = stateMachine
+
 
         self.setWindowTitle("PyBrew app")
         self.dataContainer = dataContainer
@@ -38,6 +40,11 @@ class MainWindow(QMainWindow):
         self.e_hlt_sp.valueChanged.connect(self.hlt_sp_changed)
         self.btnSkip.clicked.connect(self.stateMachine.skipStep)
         self.chk_stateMachine_on.stateChanged.connect(self.chk_state_machine_on_changed)
+
+        #driver
+        self.btnStirOnOff.clicked.connect(self.driverComm.CmdTurnOn)
+        self.btnDriverReset.clicked.connect(self.driverComm.CmdReset)
+        self.eDriver_sp.valueChanged.connect(self.driver_sp_changed)
 
         self.c.recipeChanged.connect(self.retrieve_recipe)
 
@@ -61,6 +68,9 @@ class MainWindow(QMainWindow):
         if len(self.parameters.LAST_OPEN_PATH) > 0:
             self.load_recipe_from_file(withoutDialog=True)
             self.build_recipe(self.recipe)
+
+    def driver_sp_changed(self):
+        self.dataContainer.driver_sp = self.eDriver_sp.value()
 
 # TODO improve these both dir events
     def hlt_sp_changed(self):
@@ -168,6 +178,7 @@ class MainWindow(QMainWindow):
             self.parameters.LAST_OPEN_PATH = fileName
             return True
         return False
+
     def showError(self, str):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Icon.Warning)
@@ -198,6 +209,8 @@ class MainWindow(QMainWindow):
             self.lbl_SP_reached.setStyleSheet("color: rgb(255, 255, 255); background-color: green;")
         else:
             self.lbl_SP_reached.setStyleSheet("")
+
+        self.lblDriverState.setText(f" Stav měniče:{self.dataContainer.driver_state}")
 
         self.dataContainer.state_machine_on = self.chk_stateMachine_on.isChecked()
         self.chk_HLT_pid.setChecked(self.dataContainer.hlt_PID)
