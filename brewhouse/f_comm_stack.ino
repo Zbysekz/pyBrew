@@ -105,7 +105,7 @@ void Receive(uint8_t rcv){
 void HandleDataComm(){
    uint8_t outputs = ((uint8_t)(RVK_alternator.out1)<<0) + ((uint8_t)(RVK_alternator.out2)<<1) + ((uint8_t)(RVK_alternator.out3)<<2) +
                       ((uint8_t)(HLT_alternator.out1)<<3) + ((uint8_t)(HLT_alternator.out2)<<4) + ((uint8_t)(HLT_alternator.out3)<<5) +
-                      ((uint8_t)(driver1Run)<<5);
+                      ((uint8_t)(driver1Run)<<6);
    uint8_t sbuf[] = {1,
                        getH(HLT_tempSensor.value),getL(HLT_tempSensor.value),
                        getH(RVK_tempSensor.value),getL(RVK_tempSensor.value),
