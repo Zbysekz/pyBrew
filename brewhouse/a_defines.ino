@@ -37,7 +37,10 @@ uint8_t driver1Run;
 
 unsigned long errorFlags;
 
+#define PIN_ONE_WIRE_EXT_PULLUP 29
+#define PIN_ONE_WIRE_POWER 27
 #define PIN_ONE_WIRE_BUS 31
+
 #define PIN_HEAT_RVK_1 45
 #define PIN_HEAT_RVK_2 43
 #define PIN_HEAT_RVK_3 41

@@ -19,6 +19,12 @@ void setup(){
     
   pinMode(PIN_DRIVER1_RUN, OUTPUT);
 
+  pinMode(PIN_ONE_WIRE_EXT_PULLUP, OUTPUT);
+  pinMode(PIN_ONE_WIRE_POWER, OUTPUT);
+  digitalWrite(PIN_ONE_WIRE_POWER, true);
+  digitalWrite(PIN_ONE_WIRE_EXT_PULLUP, true);
+  
+
   // LCD
   //for ESP: D1-SCL; D2-SDA
   // for ESP display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
