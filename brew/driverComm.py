@@ -12,10 +12,8 @@ cmd_readETA = bytes.fromhex("0203219B0001")
 cmd_switch_on = bytes.fromhex("020621990007")
 cmd_run = bytes.fromhex("02062199000F")
 cmd_shutdown = bytes.fromhex("020621990006")
-speed=1000
-speed_sp = bytes.fromhex("0206219A") + speed.to_bytes(length=2, byteorder="big")
-cmd_fault_reset_prep = bytes.fromhex("020621990000")
-cmd_fault_reset = bytes.fromhex("020621990080")
+cmd_fault_reset_prep = bytes.fromhex("02062199000F")
+cmd_fault_reset = bytes.fromhex("02062199008F")
 
 
 # Corresponds to CRC-16/MODBUS on https://crccalc.com/
@@ -67,7 +65,7 @@ class DriverComm:
         self.serialPort = None
         self.threads = threads
         self.dataContainer = dataContainer
-
+        self.driver_on = False
         self.tx_commands = []
 
     def send_tx(self, packet):
@@ -99,10 +97,24 @@ class DriverComm:
                 self.serialPort.close()
 
     def CmdReset(self):
+        print("sending two!")
+        self.send_tx(cmd_fault_reset_prep)
         self.send_tx(cmd_fault_reset)
+        print(self.tx_commands)
 
     def CmdTurnOn(self):
-        self.send_tx(cmd_run)
+        if not self.dataContainer.driverRun:
+            self.dataContainer.driverRun = 1
+        else:
+            self.dataContainer.driverRun = 0
+
+        #self.send_tx(cmd_run)
+
+    def CmdSPChanged(self):
+        speed = self.dataContainer.driver_sp
+        Log(f"Sending speed:{speed}")
+        speed_sp = bytes.fromhex("0206219A") + speed.to_bytes(length=2, byteorder="big")
+        self.send_tx(speed_sp)
 
     def ProcessIncomeData(self):
         container = self.dataContainer

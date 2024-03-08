@@ -71,6 +71,7 @@ class MainWindow(QMainWindow):
 
     def driver_sp_changed(self):
         self.dataContainer.driver_sp = self.eDriver_sp.value()
+        self.driverComm.CmdSPChanged()
 
 # TODO improve these both dir events
     def hlt_sp_changed(self):
@@ -211,6 +212,8 @@ class MainWindow(QMainWindow):
             self.lbl_SP_reached.setStyleSheet("")
 
         self.lblDriverState.setText(f" Stav měniče:{self.dataContainer.driver_state}")
+        self.btnStirOnOff.setText("Vypnout" if self.dataContainer.driverRun else "Zapnout")
+
 
         self.dataContainer.state_machine_on = self.chk_stateMachine_on.isChecked()
         self.chk_HLT_pid.setChecked(self.dataContainer.hlt_PID)
