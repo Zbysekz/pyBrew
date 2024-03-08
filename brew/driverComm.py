@@ -29,9 +29,9 @@ def modbusCrc(msg:str) -> int:
                 crc >>= 1
     return crc
 
-def printByteList(data):
+def formatByteList(data):
     strx = " ".join([f"{x:02x}" for x in data])
-    Log(f"{strx}")
+    return strx
 
 def createPacket(data):
     crc = modbusCrc(data)
@@ -47,8 +47,9 @@ def decode_ETA(data):
             eta = data[3]*256 + data[4]
             Log(f"ETA is:0x{eta:02x}")
             return eta
-    return -1;
-    Log(f"error decoding ETA!")
+    Log(f"error decoding ETA! data:{formatByteList}")
+    return -1
+
 
 def ETA2TEXT(eta):
     if eta == 0x33:
@@ -144,7 +145,6 @@ class DriverComm:
                 rcv_data += char
                 char = self.serialPort.read()
             if len(rcv_data) > 1:
-                printByteList(rcv_data)
                 driver_state = decode_ETA(rcv_data)
 
                 if driver_state >= 0:

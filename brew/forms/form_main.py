@@ -235,11 +235,29 @@ class MainWindow(QMainWindow):
         self.lbl_rvk_value.setText("{:.1f} °C".format(self.dataContainer.rvk_value))
         self.lbl_scz_value.setText("{:.1f} °C".format(self.dataContainer.scz_value))
 
+        hlt_error = self.dataContainer.errorFlags & 0x02
+        rvk_error = self.dataContainer.errorFlags & 0x04
+        scz_error = self.dataContainer.errorFlags & 0x08
+
         str_error = ""
         str_error += "UNKNOWN" if self.dataContainer.errorFlags & 0x01 else ""
-        str_error += "HLT_SENSOR" if self.dataContainer.errorFlags & 0x02 else ""
-        str_error += "RVK_SENSOR" if self.dataContainer.errorFlags & 0x04 else ""
-        str_error += "SCZ_SENSOR" if self.dataContainer.errorFlags & 0x08 else ""
+        str_error += "HLT_SENSOR" if hlt_error else ""
+        str_error += "RVK_SENSOR" if rvk_error else ""
+        str_error += "SCZ_SENSOR" if scz_error else ""
+
+        if hlt_error:
+            self.lbl_hlt_value.setStyleSheet("background-color: rgb(255, 0, 0);")
+        else:
+            self.lbl_hlt_value.setStyleSheet("background-color: rgb(0, 150, 231);")
+        if rvk_error:
+            self.lbl_rvk_value.setStyleSheet("background-color: rgb(255, 0, 0);")
+        else:
+            self.lbl_rvk_value.setStyleSheet("background-color: rgb(0, 150, 231);")
+
+        if scz_error:
+            self.lbl_scz_value.setStyleSheet("background-color: rgb(255, 0, 0);")
+        else:
+            self.lbl_scz_value.setStyleSheet("background-color: rgb(0, 150, 231);")
 
         self.lbl_errors.setText(f"Errors: {self.dataContainer.errorFlags} - {str_error}")
 
