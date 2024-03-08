@@ -8,7 +8,7 @@ DeviceAddress addrTempSensor_HLT = {0x28,0xFF,0x64,0x1F,0x76,0x6A,0x2F,0x05};
 DeviceAddress addrTempSensor_SCZ = {0x28,0xFF,0x64,0x1E,0x15,0x18,0xE4,0x06};
 
 //timers
-unsigned long tmrControlLoop,tmrDataComm, tmrPrint;
+unsigned long tmrControlLoop,tmrDataComm, tmrPrint, tmrReadSensors;
 //manual setpoints
 float manSP_HLT_temp, manSP_RVK_temp;
 //flags

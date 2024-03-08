@@ -1,15 +1,16 @@
 
 void loop(){
 
-  if(CheckTimer(tmrControlLoop, 100L)){
-
-    digitalWrite(PIN_DRIVER1_RUN, driver1Run);
-
+  if(CheckTimer(tmrReadSensors, 1000L)){
     if (!ReadTemperatures()){
       RVK_tempSensor.error = true;
       SCZ_tempSensor.error = true;
       HLT_tempSensor.error = true;
     }
+  }
+  if(CheckTimer(tmrControlLoop, 100L)){
+
+    digitalWrite(PIN_DRIVER1_RUN, driver1Run);
 
     ////////--RVK--/////
 
