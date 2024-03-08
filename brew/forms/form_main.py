@@ -40,6 +40,8 @@ class MainWindow(QMainWindow):
         self.e_hlt_sp.valueChanged.connect(self.hlt_sp_changed)
         self.btnSkip.clicked.connect(self.stateMachine.skipStep)
         self.chk_stateMachine_on.stateChanged.connect(self.chk_state_machine_on_changed)
+        self.btnSensorON.clicked.connect(self.sensorsON)
+        self.btnSensorOFF.clicked.connect(self.sensorsOFF)
 
         #driver
         self.btnStirOnOff.clicked.connect(self.driverComm.CmdTurnOn)
@@ -72,6 +74,12 @@ class MainWindow(QMainWindow):
     def driver_sp_changed(self):
         self.dataContainer.driver_sp = self.eDriver_sp.value()
         self.driverComm.CmdSPChanged()
+
+    def sensorsON(self):
+        self.arduinoComm.set_sensorsON()
+
+    def sensorsOFF(self):
+        self.arduinoComm.set_sensorsOFF()
 
 # TODO improve these both dir events
     def hlt_sp_changed(self):

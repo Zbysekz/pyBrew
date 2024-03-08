@@ -119,10 +119,12 @@ void HandleDataComm(){
                        getH(RVK_tempSensor.value),getL(RVK_tempSensor.value),
                        getH(SCZ_tempSensor.value),getL(SCZ_tempSensor.value),
                        getH(errorFlags),getL(errorFlags),
-                       getH((errorFlags>>16)),getL((errorFlags>>16)),outputs
+                       getH((errorFlags>>16)),getL((errorFlags>>16)),outputs,
+                       getH(n_of_sensor_fails),getL(n_of_sensor_fails),
+                       getH((n_of_sensor_fails>>16)),getL((n_of_sensor_fails>>16))
                        };
 
-    int cnt = Send(sbuf,12);
+    int cnt = Send(sbuf,16);
     
     while(Serial.available()){
       int rcv = Serial.read();

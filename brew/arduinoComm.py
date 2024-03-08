@@ -72,6 +72,15 @@ class ArduinoComm:
             if self.connected:
                 self.serialPort.close()
 
+    def set_sensorsON(self):
+        data = bytes([3])
+        pkg = CreatePacket(data)
+        self.serialPort.write(pkg)
+
+    def set_sensorsOFF(self):
+        data = bytes([2])
+        pkg = CreatePacket(data)
+        self.serialPort.write(pkg)
     def SendData(self):
 
         bitsPacked = packBits(self.dataContainer.hlt_on,

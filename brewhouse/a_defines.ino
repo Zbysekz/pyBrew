@@ -1,5 +1,6 @@
 
 
+#define TEMP_SENSORS_FAIL_TOLERANCE 3 // how many times can sensor fail in row to not report error
 #define REQ_CNT_OF_TEMPSENSORS 3 // how many temperature sensors are connected
 
 DeviceAddress addrTempSensor_RVK = {0x28,0xC5,0x60,0x94,0x97,0x0C,0x03,0x69};
@@ -21,6 +22,7 @@ uint8_t rxBuffer[RXQUEUESIZE][RXBUFFSIZE];//for first item if >0 command is insi
 bool rxBufferMsgReady[RXQUEUESIZE];
 uint8_t rxLen,crcH,crcL,readState,rxPtr,rxBufPtr=0;
 uint8_t driver1Run;
+unsigned long n_of_sensor_fails = 0;
 /////// MACROS
 
 #define getH(x) (uint8_t(round(x*100)/256))
@@ -110,6 +112,8 @@ typedef struct TempSensor_struct{
   float calib_triplePointBath, calib_boilingPoint;
   bool error;
   uint32_t errorCode;
+  float last_ok_value;
+  uint8_t n_of_fails;
   
   TempSensor_struct(){
     value = 0.0;
@@ -118,6 +122,8 @@ typedef struct TempSensor_struct{
     calib_triplePointBath = 0.0;
     calib_boilingPoint = 100.0;
     errorCode = ERROR_CODE_UNKNOWN;
+    last_ok_value = 0.0;
+    n_of_fails = 99; // due to first read
   }
 }TempSensor;
 

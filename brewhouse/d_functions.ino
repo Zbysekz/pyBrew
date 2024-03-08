@@ -43,16 +43,24 @@ bool ReadTemperature(DeviceAddress address, TempSensor *tempS){
   if(tempS == NULL) return false;
   float tempC = oneWireSensors.getTempC(address);
   if(tempC==-127){
-    errorFlags |= 1UL << tempS->errorCode;
-    tempS->error = true;
-    tempS->rawValue = 0.0;
-    tempS->value = 0.0;
-    return false;
+    n_of_sensor_fails ++;
+    if (tempS->n_of_fails++ >=TEMP_SENSORS_FAIL_TOLERANCE){
+      errorFlags |= 1UL << tempS->errorCode;
+      tempS->error = true;
+      tempS->rawValue = 0.0;
+      tempS->value = 0.0;
+      return false;
+    }else{
+      tempS->value = tempS->last_ok_value;
+      return true;
+    }
   }else{
     errorFlags &= ~(1UL << tempS->errorCode);
     tempS->error = true;
     tempS->rawValue = tempC;
     tempS->value = CalibrateTemp(tempS->rawValue, tempS->calib_triplePointBath, tempS->calib_boilingPoint);
+    tempS->n_of_fails = 0;
+    tempS->last_ok_value = tempS->value;
     return true;
   }
 }

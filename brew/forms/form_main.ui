@@ -781,7 +781,7 @@ color: rgb(255, 255, 255);</string>
       <string>Reset</string>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -807,6 +807,32 @@ color: rgb(255, 255, 255);</string>
       </item>
      </layout>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="btnSensorON">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>240</y>
+      <width>131</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>sensorsON</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnSensorOFF">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>270</y>
+      <width>131</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>sensorsOFF</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
