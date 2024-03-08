@@ -44,11 +44,13 @@ bool ReadTemperature(DeviceAddress address, TempSensor *tempS){
   float tempC = oneWireSensors.getTempC(address);
   if(tempC==-127){
     errorFlags |= 1UL << tempS->errorCode;
+    tempS->error = true;
     tempS->rawValue = 0.0;
     tempS->value = 0.0;
     return false;
   }else{
     errorFlags &= ~(1UL << tempS->errorCode);
+    tempS->error = true;
     tempS->rawValue = tempC;
     tempS->value = CalibrateTemp(tempS->rawValue, tempS->calib_triplePointBath, tempS->calib_boilingPoint);
     return true;
@@ -67,16 +69,16 @@ bool ReadTemperatures(){
 
   oneWireSensors.requestTemperatures();
 
-  res = res && ReadTemperature(addrTempSensor_HLT, &HLT_tempSensor);
-  res = res && ReadTemperature(addrTempSensor_RVK, &RVK_tempSensor);
-  res = res && ReadTemperature(addrTempSensor_SCZ, &SCZ_tempSensor);
+  bool res1 = ReadTemperature(addrTempSensor_HLT, &HLT_tempSensor);
+  bool res2 = ReadTemperature(addrTempSensor_RVK, &RVK_tempSensor);
+  bool res3 = ReadTemperature(addrTempSensor_SCZ, &SCZ_tempSensor);
 
   //temp_HLT_      = CalibrateTemp(temp_HLT_,0.4,97.1);
   //temp_RVK_ = CalibrateTemp(temp_RVK_,0.7,98.8);//not calibrated yet
   //temp_scezovaciKad = CalibrateTemp(temp_scezovaciKad,0.7,98.8);
   //temp_mrazak         = CalibrateTemp(temp_mrazak,0.0,96.0);
   
-  return res;
+  return res&&res1&&res2&&res3;
 }
 
 float CalibrateTemp(float raw, float triplePointBath, float boilingPoint){

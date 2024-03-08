@@ -5,7 +5,11 @@ void loop(){
 
     digitalWrite(PIN_DRIVER1_RUN, driver1Run);
 
-    ReadTemperatures();
+    if (!ReadTemperatures()){
+      RVK_tempSensor.error = true;
+      SCZ_tempSensor.error = true;
+      HLT_tempSensor.error = true;
+    }
 
     ////////--RVK--/////
 
