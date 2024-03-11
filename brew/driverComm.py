@@ -45,7 +45,7 @@ def decode_ETA(data):
     if len(data) > 4:
         if data[0] == 0x02 and data[1] == 0x03:
             eta = data[3]*256 + data[4]
-            Log(f"ETA is:0x{eta:02x}")
+            #Log(f"ETA is:0x{eta:02x}")
             return eta
     Log(f"error decoding ETA! data:{formatByteList}")
     return -1

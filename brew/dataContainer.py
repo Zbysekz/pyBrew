@@ -19,12 +19,14 @@ class DataContainer:
 
         self.errorFlags = 0
         self.outputs = 0
+        self.sensor_error_cnt = 0
 
         self.sp_reached = False
 
         self.recipe = {}
         self.driver_state = "?"
         self.driverRun = 0
+        self.first_arduino_data_ready = False
 
 
     def updateValues(self):

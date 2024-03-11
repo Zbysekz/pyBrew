@@ -119,7 +119,10 @@ class ArduinoComm:
                                     (int)(getVal(data, 9)) << 16)
                         container.outputs = (int)(data[11])
 
-                        self.first_arduino_data_ready = True
+                        container.sensor_error_cnt = (int)(getVal(data, 12)) + (
+                                (int)(getVal(data, 14)) << 16)
+
+                        container.first_arduino_data_ready = True
                 else:
                     break
             else:

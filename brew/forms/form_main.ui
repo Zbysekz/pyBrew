@@ -807,6 +807,19 @@ color: rgb(255, 255, 255);</string>
       </item>
      </layout>
     </widget>
+    <widget class="QLabel" name="lblSensorErrors">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>0</y>
+       <width>141</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>err_cnt:</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QPushButton" name="btnSensorON">
     <property name="geometry">

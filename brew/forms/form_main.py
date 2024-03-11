@@ -15,14 +15,14 @@ class Communicate(QObject):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, parameters, dataContainer, arduinoComm, driverComm, stateMachine):
+    def __init__(self, parameters, dataContainer, arduinoComm, driverComm, stateMachine, SQLcomm):
         super(MainWindow, self).__init__()  # Call the inherited classes __init__ method
         uic.loadUi('./forms/form_main.ui', self)  # Load the .ui file
         self.parameters = parameters
         self.arduinoComm = arduinoComm
         self.driverComm = driverComm
         self.stateMachine = stateMachine
-
+        self.SQLcomm = SQLcomm
 
         self.setWindowTitle("PyBrew app")
         self.dataContainer = dataContainer
@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
     def toggleFan(self, *arg, **kwargs):
         self.dataContainer.fan_state = not self.dataContainer.fan_state
         self.update()
+        self.SQLcomm.insertTxCommand("192.168.0.33", f"4,{'1' if self.dataContainer.fan_state else '0'}")  # cellar off FAN
 
     def addMashLine(self):
         if len(self.recipe.keys()) > 0:
@@ -222,6 +223,7 @@ class MainWindow(QMainWindow):
         self.lblDriverState.setText(f" Stav měniče:{self.dataContainer.driver_state}")
         self.btnStirOnOff.setText("Vypnout" if self.dataContainer.driverRun else "Zapnout")
 
+        self.lblSensorErrors.setText(f"err cnt:{ self.dataContainer.sensor_error_cnt}")
 
         self.dataContainer.state_machine_on = self.chk_stateMachine_on.isChecked()
         self.chk_HLT_pid.setChecked(self.dataContainer.hlt_PID)

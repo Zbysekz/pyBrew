@@ -14,6 +14,7 @@ from dataContainer import DataContainer
 from arduinoComm import ArduinoComm
 from driverComm import DriverComm
 from stateMachine import StateMachine
+from SQLserverComm import SQLcomm
 
 rootPath = str(pathlib.Path(__file__).parent.absolute())
 class cApp:
@@ -32,12 +33,16 @@ class cApp:
         self.driverComm = DriverComm(self.parameters, self.threads, self.dataContainer)
         self.stateMachine = StateMachine(self.dataContainer)
 
+        self.SQLcomm = SQLcomm(self.parameters, self.dataContainer)
+
         self.mainWindow = MainWindow(self.parameters, self.dataContainer,
-                                     self.arduinoComm, self.driverComm, self.stateMachine)
+                                     self.arduinoComm, self.driverComm, self.stateMachine, self.SQLcomm)
+
+        self.SQLcomm.SendDataToServer()  # then self-called
 
     def run(self):
         retCode = -1
-        self.driverComm.process() # then self-called
+        self.driverComm.process()  # then self-called
         try:
             self.mainWindow.update()
             self.mainWindow.show()
@@ -51,6 +56,7 @@ class cApp:
 
         self.arduinoComm.terminate=True
         self.driverComm.terminate=True
+        self.SQLcomm.terminate=True
         Log("quitting")
         Log("Threads:" + str(self.threads.values()))
         for name, t in self.threads.items():
@@ -84,6 +90,7 @@ class cApp:
             for f in files:
                 os.replace(updateFolder+f, rootPath+"/"+os.path.basename(f)) # move to parent folder
                 Log("------------------------------------ Updated new SW -----------------------")
+                break
 
             os.popen('nohup /home/pi/brew/autorunMain.sh')
             self.mainWindow.close()
