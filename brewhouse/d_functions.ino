@@ -57,7 +57,7 @@ bool ReadTemperature(DeviceAddress address, TempSensor *tempS){
     }
   }else{
     errorFlags &= ~(1UL << tempS->errorCode);
-    tempS->error = true;
+    tempS->error = false;
     tempS->rawValue = tempC;
     tempS->value = CalibrateTemp(tempS->rawValue, tempS->calib_triplePointBath, tempS->calib_boilingPoint);
     tempS->n_of_fails = 0;
