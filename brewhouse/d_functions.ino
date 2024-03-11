@@ -52,6 +52,7 @@ bool ReadTemperature(DeviceAddress address, TempSensor *tempS){
       return false;
     }else{
       tempS->value = tempS->last_ok_value;
+      tempS->error = false;
       return true;
     }
   }else{
