@@ -14,7 +14,7 @@ void loop(){
 
     ////////--RVK--/////
 
-    PID_temp_RVK.active = !RVK_tempSensor.error && RVK_HeatingEnabled && RVK_PIDEnabled;
+    PID_temp_RVK.active = /*!RVK_tempSensor.error && */RVK_HeatingEnabled && RVK_PIDEnabled;
     PID_temp_RVK.input = RVK_tempSensor.value;
     PID_temp_RVK.setpoint = manSP_RVK_temp;
     
