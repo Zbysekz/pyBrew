@@ -7,7 +7,7 @@ from logger import Log, LogException
 from parameters import Parameters
 import os
 import pathlib
-
+from subprocess import PIPE, Popen
 import subprocess
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QStackedWidget,QMessageBox
 from dataContainer import DataContainer
@@ -28,6 +28,8 @@ class cApp:
         logger.setParameters(self.parameters)
         self.threads = {}  # track info about threads
         self.dataContainer = DataContainer()
+
+        self.determineSerialPorts()
 
         self.arduinoComm = ArduinoComm(self.parameters, self.threads, self.dataContainer)
         self.driverComm = DriverComm(self.parameters, self.threads, self.dataContainer)
@@ -94,6 +96,31 @@ class cApp:
 
             os.popen('nohup /home/pi/brew/autorunMain.sh')
             self.mainWindow.close()
+
+    def determineSerialPorts(self):
+        Log("Trying to find devices..")
+
+        # motor driver
+        command = "source get_device.sh; getdevice 10c4:ea60"
+        with  Popen(command, shell=True, executable="/bin/bash",stdout=PIPE, stderr=None) as process:
+            output = process.communicate()[0].decode("utf-8")
+            if "ttyUSB" in output:
+                port =  "/dev/"+output.replace('\n',"")
+                self.parameters.DRIVER_SERIALPORT = port
+                Log(f"Found '{port}' for motor driver")
+            else:
+                Log(f"Error parsing arduino port! '{output}'")
+        #arduino
+        command = "source get_device.sh; getdevice 1a86:7523"
+        with  Popen(command, shell=True, executable="/bin/bash", stdout=PIPE,
+                    stderr=None) as process:
+            output = process.communicate()[0].decode("utf-8")
+            if "ttyUSB" in output:
+                port = "/dev/"+output.replace('\n',"")
+                self.parameters.SERIALPORT = port
+                Log(f"Found '{port}' for arduino")
+            else:
+                Log(f"Error parsing arduino port! '{output}'")
 
 if __name__ == '__main__':
 
