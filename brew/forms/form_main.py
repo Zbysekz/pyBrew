@@ -51,6 +51,7 @@ class MainWindow(QMainWindow):
         self.c.recipeChanged.connect(self.retrieve_recipe)
 
         self.btnFan.mousePressEvent = self.toggleFan  # because this btn is actually label
+        self.btnWaterCooling.clicked.connect(self.toggleWaterCooling)
         self.timer = QTimer()
         self.timer.timeout.connect(self.update)
 
@@ -105,6 +106,12 @@ class MainWindow(QMainWindow):
         self.dataContainer.fan_state = not self.dataContainer.fan_state
         self.update()
         self.SQLcomm.insertTxCommand("192.168.0.33", f"4,{'1' if self.dataContainer.fan_state else '0'}")  # cellar off FAN
+
+    def toggleWaterCooling(self):
+        self.dataContainer.water_cooling_state = not self.dataContainer.water_cooling_state
+        self.update()
+        self.SQLcomm.insertTxCommand("192.168.0.33",
+                                     f"25,{'1' if self.dataContainer.water_cooling_state else '0'}")  # water cooling
 
     def addMashLine(self):
         if len(self.recipe.keys()) > 0:

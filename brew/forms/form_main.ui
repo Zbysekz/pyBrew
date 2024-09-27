@@ -847,6 +847,19 @@ color: rgb(255, 255, 255);</string>
      <string>sensorsOFF</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="btnWaterCooling">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>380</y>
+      <width>131</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Chlazení vodou</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
