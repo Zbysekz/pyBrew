@@ -1,6 +1,5 @@
 import time
 
-
 class StateMachine:
 
     def __init__(self, dataContainer):
@@ -48,10 +47,15 @@ class StateMachine:
 
                 if not self.dataContainer.sp_reached:
                     self.dataContainer.rvk_setpoint = step_grad  # for now - without grad regulation
+                    reduction = abs(step_temp - self.dataContainer.rvk_value)
+                    if reduction <5:
+                        self.dataContainer.rvk_setpoint -= (5-reduction) * 20
+                        if self.dataContainer.rvk_setpoint < 5:
+                            self.dataContainer.rvk_setpoint = 5
                 else:
                     self.dataContainer.rvk_setpoint = step_grad * 0.2
 
-                if self.dataContainer.rvk_value >= step_temp:
+                if self.dataContainer.rvk_value >= step_temp-2:
                     if not self.dataContainer.sp_reached:
                         self.dataContainer.sp_reached = True
                         self.step_reached_timer = time.time()
