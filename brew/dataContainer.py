@@ -3,6 +3,7 @@
 class DataContainer:
     def __init__(self):
         self.fan_state = False
+        self.water_cooling_state = False
         self.avg_grad = 0.0
 
         self.state_machine_on = False
