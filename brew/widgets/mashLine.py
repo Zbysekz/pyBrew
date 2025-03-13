@@ -7,7 +7,7 @@ import datetime
 from PyQt5.QtCore import pyqtSignal
 
 class MashLine(QWidget):
-    def __init__(self, temperature, time, gradient, callback_change :pyqtSignal):
+    def __init__(self, temperature, time, gradient, tolerance, callback_change :pyqtSignal):
         super(MashLine, self).__init__()  # Call the inherited classes __init__ method
         uic.loadUi('./widgets/mashLine.ui', self)  # Load the .ui file
         # self.show() # Show the GUI
@@ -15,10 +15,12 @@ class MashLine(QWidget):
         self.edit_temp.setValue(temperature)
         self.edit_time.setValue(time)
         self.edit_gradient.setValue(gradient)
+        self.edit_tolerance.setValue(tolerance)
 
         self.edit_temp.valueChanged.connect(self.change)
         self.edit_time.valueChanged.connect(self.change)
         self.edit_gradient.valueChanged.connect(self.change)
+        self.edit_tolerance.valueChanged.connect(self.change)
 
         self.callback_change = callback_change
 
@@ -32,7 +34,7 @@ class MashLine(QWidget):
         pass
 
     def readValues(self):
-        return self.edit_temp.value(), self.edit_time.value(), self.edit_gradient.value()
+        return self.edit_temp.value(), self.edit_time.value(), self.edit_gradient.value(), self.edit_tolerance.value()
 
     def setColor(self, color):
         self.frame.setStyleSheet("background-color: " + color + ";")

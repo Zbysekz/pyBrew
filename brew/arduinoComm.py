@@ -31,6 +31,7 @@ class ArduinoComm:
         self.dataContainer = dataContainer
 
         self.HandleSerialPort()
+        self.first_data = True
 
     def process(self):
         if self.connected:
@@ -106,10 +107,16 @@ class ArduinoComm:
 
         while True:  # process all data
             if self.connected:
+                if self.first_data:
+                    Log("Receiving first data...")
                 data = getRcvdData()
+                if self.first_data:
+                    Log("Received first data:"+str(data))
+
                 # print("received:"+str(data))
 
                 if len(data) > 0:
+                    self.first_data = False
                     if data[0] == 1:
                         container.hlt_value = getVal(data, 1)
                         container.rvk_value = getVal(data, 3)

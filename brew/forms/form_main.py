@@ -134,7 +134,7 @@ class MainWindow(QMainWindow):
             layout.removeWidget(l)
         self.mashLines.clear()
         for line in recipe.values():
-            wd = MashLine(*line, self.c.recipeChanged)
+            wd = MashLine(line[0],line[1],line[2],line[3] if len(line)>3 else 0, self.c.recipeChanged)
         # wd.setFixedHeight(60)
             self.mashLines.append(wd)
             layout.addWidget(wd)
@@ -171,8 +171,8 @@ class MainWindow(QMainWindow):
     def retrieve_recipe(self):
         ptr = 1
         for l in self.mashLines:
-            temp, time, gradient = l.readValues()
-            self.recipe[str(ptr)] = [temp, time, gradient]
+            temp, time, gradient, tolerance = l.readValues()
+            self.recipe[str(ptr)] = [temp, time, gradient, tolerance]
             ptr += 1
         self.dataContainer.recipe = self.recipe
 
@@ -297,7 +297,7 @@ class MainWindow(QMainWindow):
         self.lbl_reached_actual_time.setText(
             f"Akt.čas po dosažení:{(int)(self.stateMachine.step_reached_actual_time / 60)} min {(int)(self.stateMachine.step_reached_actual_time % 60)} s")
 
-        self.lbl_avg_grad.setText(f"Gradient: {'{:.1f} °C'.format(self.dataContainer.avg_grad)}°C/min")
+        self.lbl_avg_grad.setText(f"Gradient: {'{:.1f} '.format(self.dataContainer.avg_grad)}°C/min")
 
         for l in self.mashLines:
             l.setColor("rgb(0, 150, 255)")

@@ -185,6 +185,39 @@
        <number>0</number>
       </property>
       <item>
+       <widget class="QSpinBox" name="edit_tolerance">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
+        <property name="specialValueText">
+         <string/>
+        </property>
+        <property name="suffix">
+         <string>°C</string>
+        </property>
+        <property name="prefix">
+         <string>tol:</string>
+        </property>
+        <property name="maximum">
+         <number>600</number>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QSpinBox" name="edit_gradient">
         <property name="font">
          <font>
@@ -207,7 +240,10 @@
          <string/>
         </property>
         <property name="suffix">
-         <string>°C/min</string>
+         <string>%</string>
+        </property>
+        <property name="prefix">
+         <string>power:</string>
         </property>
         <property name="maximum">
          <number>600</number>

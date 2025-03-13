@@ -22,6 +22,7 @@ class StateMachine:
         self.step_start_timer = time.time()
         self.step_reached_timer = time.time()
         self.dataContainer.sp_reached = False
+
     def skipStep(self):
         self.step_start_timer = time.time()
         self.step_reached_timer = time.time()
@@ -40,7 +41,7 @@ class StateMachine:
             else:
 
 
-                step_temp, step_time, step_grad = self.dataContainer.recipe[str(self.state)]
+                step_temp, step_time, step_grad, step_tol = self.dataContainer.recipe[str(self.state)]
 
                 self.dataContainer.rvk_on = self.dataContainer.rvk_value < step_temp
                 self.dataContainer.rvk_PID = False
@@ -53,9 +54,16 @@ class StateMachine:
                         if self.dataContainer.rvk_setpoint < 5:
                             self.dataContainer.rvk_setpoint = 5
                 else:
-                    self.dataContainer.rvk_setpoint = step_grad * 0.2
 
-                if self.dataContainer.rvk_value >= step_temp-2:
+                    lowest_power = step_grad * 0.2
+                    highest_power = step_grad
+                    highest_avg_grad = 1.5
+
+                    out_power = (highest_power-lowest_power) * (1.0 - max(0,min(self.dataContainer.avg_grad, highest_avg_grad))/highest_avg_grad) + lowest_power
+
+                    self.dataContainer.rvk_setpoint = out_power
+
+                if self.dataContainer.rvk_value >= step_temp-step_tol:
                     if not self.dataContainer.sp_reached:
                         self.dataContainer.sp_reached = True
                         self.step_reached_timer = time.time()
@@ -71,6 +79,7 @@ class StateMachine:
                     self.step_start_timer = time.time()
                     self.step_reached_timer = time.time()
                     self.state += 1
+                    self.step_reached_actual_time = 0
                     self.dataContainer.sp_reached = False
 
         else:
